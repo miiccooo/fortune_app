@@ -1,0 +1,44 @@
+{
+  "suits": {
+    "wands": {
+      "jp": "ワンド",
+      "theme": "情熱・行動・創造",
+      "keywords_upright": ["挑戦", "やる気", "前進"],
+      "keywords_reversed": ["空回り", "焦り", "燃え尽き"]
+    },
+    "cups": {
+      "jp": "カップ",
+      "theme": "感情・愛・共感",
+      "keywords_upright": ["優しさ", "調和", "つながり"],
+      "keywords_reversed": ["不安", "依存", "すれ違い"]
+    },
+    "swords": {
+      "jp": "ソード",
+      "theme": "思考・決断・真実",
+      "keywords_upright": ["判断", "整理", "突破口"],
+      "keywords_reversed": ["考えすぎ", "対立", "混乱"]
+    },
+    "pentacles": {
+      "jp": "ペンタクル",
+      "theme": "現実・仕事・お金",
+      "keywords_upright": ["堅実", "積み上げ", "成果"],
+      "keywords_reversed": ["停滞", "浪費", "不安定"]
+    }
+  },
+  "ranks": {
+    "ace":   {"jp": "エース", "upright": "始まり・種まき・可能性", "reversed": "空振り・迷い・準備不足"},
+    "2":     {"jp": "2", "upright": "バランス・選択・協力", "reversed": "優柔不断・対立・ズレ"},
+    "3":     {"jp": "3", "upright": "成長・広がり・チーム", "reversed": "未熟・噛み合わない・散漫"},
+    "4":     {"jp": "4", "upright": "安定・休息・土台", "reversed": "マンネリ・停滞・守りすぎ"},
+    "5":     {"jp": "5", "upright": "変化・試練・学び", "reversed": "混乱・言い訳・こじれ"},
+    "6":     {"jp": "6", "upright": "調和・前進・助け", "reversed": "遅れ・依存・中途半端"},
+    "7":     {"jp": "7", "upright": "挑戦・戦略・粘り", "reversed": "焦り・防戦・消耗"},
+    "8":     {"jp": "8", "upright": "加速・習得・集中", "reversed": "停滞・ズレ・遠回り"},
+    "9":     {"jp": "9", "upright": "達成手前・仕上げ・自信", "reversed": "不安・疑い・やり直し"},
+    "10":    {"jp": "10", "upright": "完成・結果・区切り", "reversed": "重荷・抱えすぎ・惰性"},
+    "page":  {"jp": "ペイジ", "upright": "好奇心・学び・メッセージ", "reversed": "未熟・迷い・情報過多"},
+    "knight":{"jp": "ナイト", "upright": "行動・突破・スピード", "reversed": "暴走・無謀・空回り"},
+    "queen": {"jp": "クイーン", "upright": "受容・育てる・直感", "reversed": "感情的・過干渉・疲れ"},
+    "king":  {"jp": "キング", "upright": "統率・完成度・責任", "reversed": "支配・頑固・硬直"}
+  }
+}

@@ -1,0 +1,768 @@
+:root {
+  --bg: #fff7fb;
+  --card: #ffffff;
+  --ink: #555;
+  --sub: #777;
+  --accent: #b37dff;
+  --accent2: #6fd6ff;
+  --border: #f0d7ff;
+  --shadow: 0 10px 30px rgba(0, 0, 0, .08);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+
+body {
+  margin: 0;
+  font-family: 'M PLUS Rounded 1c', system-ui, -apple-system, "Segoe UI", sans-serif;
+  background:
+    radial-gradient(circle at top, #ffe9f7 0%, var(--bg) 35%, #eaf7ff 100%);
+  color: var(--ink);
+  min-height: 100vh;
+  font-weight: 500;
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+p {
+  word-break: break-word;
+  color: #777;
+  font-weight: 600;
+  line-height: 1.8;
+}
+
+.wrap {
+  max-width: 980px;
+  margin: 0 auto;
+  padding: 32px 20px 64px;
+}
+
+h1 {
+  margin: 8px 0 30px;
+  text-align: center;
+  font-family: "Lobster Two", cursive;
+  font-size: clamp(32px, 4vw, 46px);
+  background: linear-gradient(90deg, #b37dff, #ff9fdc, #6fd6ff);
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+  text-shadow: 0 3px 12px rgba(179, 125, 255, .25);
+}
+
+.magic-line {
+  position: relative;
+  width: 180px;
+  height: 3px;
+  margin: 14px auto 24px;
+  background: linear-gradient(90deg,
+      transparent,
+      #b37dff,
+      #ff9fdc,
+      #6fd6ff,
+      transparent);
+}
+
+.magic-line::before,
+.magic-line::after {
+  content: "✦";
+  position: absolute;
+  top: -12px;
+  font-size: 16px;
+  color: #b37dff;
+}
+
+.magic-line::before {
+  left: -10px;
+}
+
+.magic-line::after {
+  right: -10px;
+}
+
+.sub {
+  color: var(--sub);
+  margin: 0 0 22px;
+  text-align: center;
+  line-height: 1.7;
+  font-size: 15px;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.card {
+  position: relative;
+  background: rgba(255, 255, 255, 0.92);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  box-shadow: var(--shadow);
+  padding: 18px;
+  backdrop-filter: blur(6px);
+}
+
+.card.big {
+  grid-column: 1 / -1;
+  border: 1px solid rgba(179, 125, 255, .35);
+}
+
+.card::after {
+  content: "";
+  position: absolute;
+  top: 10px;
+  right: 12px;
+  width: 54px;
+  height: 54px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 30% 30%, rgba(255, 255, 255, .9), rgba(255, 255, 255, 0) 60%);
+  opacity: .35;
+  pointer-events: none;
+}
+
+h2 {
+  margin: 0 0 12px;
+  font-size: 18px;
+
+  font-family: 'M PLUS Rounded 1c', sans-serif;
+  font-weight: 700;
+
+  color: #fff;
+
+  letter-spacing: 1px;
+}
+
+/* h2::before {
+  content: "✦ ";
+}
+
+h2::after {
+  content: " ✧";
+} */
+
+.pink h2 {
+  color: #fff;
+  text-shadow:
+    1px 1px 1px rgba(0, 0, 0, 0.2),
+    0 0 6px #fd5d9d,
+    0 0 14px #ffaad2,
+    0 0 22px #ffc0eb;
+}
+
+.blue h2 {
+  color: #fff;
+  text-shadow:
+    1px 1px 1px rgba(0, 0, 0, 0.2),
+    0 0 6px #1f88ff,
+    0 0 14px #6de7ff,
+    0 0 22px #afe5fe;
+}
+
+.purple h2 {
+  color: #fff;
+  text-shadow: 
+    1px 1px 1px rgba(0, 0, 0, 0.2),
+    0 0 6px #be19ff,
+    0 0 14px #b37dff,
+    0 0 22px #8a5cff;
+}
+
+.rainbow h2{
+  color: #fff;
+  text-shadow:
+    1px 1px 1px rgba(0, 0, 0, 0.2),
+    0 0 6px #00e927,
+    0 0 14px #a0ff7d,
+    0 0 22px #f7ff5c;
+}
+
+@keyframes glowShift {
+  0% {
+    filter: hue-rotate(0deg);
+  }
+
+  100% {
+    filter: hue-rotate(360deg);
+  }
+}
+
+
+.msg {
+  margin-top: 12px;
+  padding: 12px 14px;
+  border-radius: 16px;
+  line-height: 1.7;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.pink .msg {
+  background: linear-gradient(90deg,
+      rgba(255, 0, 162, 0.248),
+      rgba(254, 201, 229, 0.34));
+}
+
+.purple .msg {
+  background: linear-gradient(90deg,
+      rgba(179, 57, 255, 0.18),
+      rgba(181, 152, 255, 0.12));
+}
+
+.blue .msg {
+  background: linear-gradient(90deg,
+      rgba(33, 148, 255, 0.18),
+      rgba(75, 188, 255, 0.12));
+}
+
+.rainbow .msg{
+  background: linear-gradient(90deg,
+    rgba(253, 255, 154, 0.25),
+    rgba(125, 235, 255, 0.22),
+    rgba(176, 111, 255, 0.22),
+    rgba(255, 124, 141, 0.2)
+  );
+}
+
+b {
+  font-weight: 700;
+}
+
+.pink b {
+  color: #ff428f;
+}
+
+.blue b {
+  color: #39a1fd;
+}
+
+.purple b {
+  color: #9b6bff;
+}
+
+
+.hint {
+  font-size: clamp(17px, 2.2vw, 21px);
+  line-height: 1.8;
+  margin: 8px 0 0;
+  font-weight: 600;
+}
+
+label {
+  display: block;
+  font-size: 13px;
+  color: var(--sub);
+  margin-bottom: 8px;
+  font-weight: 600;
+}
+
+input {
+  width: 100%;
+  padding: 13px 14px;
+  border-radius: 14px;
+  border: 1px solid var(--border);
+  outline: none;
+  font-size: 16px;
+  background: #fff;
+  transition: border-color .18s ease, box-shadow .18s ease;
+}
+
+input:focus {
+  border-color: rgba(179, 125, 255, .7);
+  box-shadow: 0 0 0 4px rgba(179, 125, 255, .12);
+}
+
+button {
+  margin-top: 14px;
+  width: 100%;
+  padding: 13px 14px;
+  border-radius: 14px;
+  border: none;
+  color: white;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+
+  /* 🌈 やわらか虹グラデ */
+  background: linear-gradient(90deg,
+    #ff9de2,
+    #cba6ff,
+    #9fd3ff,
+    #ffe29f);
+
+  background-size: 300%;
+
+  box-shadow:
+    0 8px 20px rgba(179, 125, 255, .25),
+    0 0 10px rgba(255, 180, 255, .3);
+
+  transition: all 0.4s ease;
+}
+
+/* ✨ ホバー＝魔法発動 */
+button:hover {
+  background-position: 100%;
+
+  box-shadow:
+    0 0 12px rgba(255, 200, 255, 0.9),
+    0 0 24px rgba(230, 218, 253, 0.8),
+    0 0 36px rgba(216, 236, 255, 0.6);
+
+  transform: translateY(-2px) scale(1.02);
+}
+
+/* 👇 押したとき */
+button:active {
+  transform: scale(.97);
+}
+
+button::after {
+  content: "✨";
+  margin-left: 6px;
+}
+
+.error {
+  color: #c0392b;
+  margin: 10px 0 0;
+}
+
+.foot {
+  color: var(--sub);
+  font-size: 12px;
+  margin-top: 14px;
+  text-align: center;
+}
+
+.back {
+  display: inline-block;
+  margin-bottom: 10px;
+  color: var(--sub);
+  text-decoration: none;
+  font-size: 14px;
+}
+
+.back:hover {
+  text-decoration: underline;
+}
+
+/* =========================
+   Card FX
+   ========================= */
+
+.fx {
+  position: relative;
+  transform-style: preserve-3d;
+}
+
+.fx-pop {
+  animation: popIn .55s ease-out both;
+}
+
+@keyframes popIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px) scale(.98);
+    filter: blur(3px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    filter: blur(0);
+  }
+}
+
+.fx-float {
+  transition: transform .18s ease, box-shadow .18s ease;
+}
+
+.fx-float:hover {
+  transform: translateY(-4px);
+}
+
+.fx-glow::before {
+  content: "";
+  position: absolute;
+  inset: -2px;
+  border-radius: 22px;
+  background: linear-gradient(90deg, rgba(179, 125, 255, .35), rgba(111, 214, 255, .35));
+  filter: blur(10px);
+  opacity: .55;
+  z-index: -1;
+}
+
+.fx:active {
+  transform: rotateX(2deg) rotateY(-2deg) translateY(-2px);
+}
+
+.grid .card:nth-child(1) {
+  animation-delay: .02s;
+}
+
+.grid .card:nth-child(2) {
+  animation-delay: .08s;
+}
+
+.grid .card:nth-child(3) {
+  animation-delay: .14s;
+}
+
+.grid .card:nth-child(4) {
+  animation-delay: .20s;
+}
+
+/* =========================
+   Tarot Image
+   ========================= */
+
+.tarot-image {
+  width: 180px;
+  margin: 10px auto;
+  border-radius: 16px;
+  box-shadow: 0 15px 40px rgba(0, 0, 0, .25);
+  transition: transform .2s ease, box-shadow .2s ease;
+}
+
+.tarot-image:hover {
+  transform: scale(1.05);
+  box-shadow: 0 18px 42px rgba(0, 0, 0, .28);
+}
+
+/* =========================
+   Tarot Flip Card
+   ========================= */
+
+.tarot-card {
+  position: relative;
+  width: 200px;
+  height: 320px;
+  margin: 20px auto;
+  perspective: 1000px;
+  transform-style: preserve-3d;
+  cursor: pointer;
+  overflow: visible;
+}
+
+.card-inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transform-style: preserve-3d;
+  transition: transform 0.8s ease;
+}
+
+.tarot-card.flip .card-inner {
+  transform: rotateY(180deg);
+}
+
+.card-front,
+.card-back {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+.card-front img,
+.card-back img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 12px;
+}
+
+.card-back {
+  transform: rotateY(180deg);
+}
+
+/* =========================
+   Magic Orbit Ring + Symbols
+   ========================= */
+
+/* 横に大きい平たい光輪 */
+.tarot-card.glow::before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 360px;
+  height: 110px;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 3;
+
+  background:
+    radial-gradient(circle, rgba(255, 255, 255, .95) 2px, transparent 3px) 18% 40%,
+    radial-gradient(circle, rgba(255, 210, 255, .95) 2px, transparent 3px) 60% 72%,
+    radial-gradient(circle, rgba(180, 220, 255, .95) 2px, transparent 3px) 82% 30%;
+
+  box-shadow:
+    0 0 18px rgba(250, 249, 144, 0.75),
+    0 0 40px rgba(243, 255, 255, 0.55);
+
+  filter: blur(2px);
+  animation: orbitEllipse .8s linear forwards;
+}
+
+
+@keyframes orbitEllipse {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -50%) rotate(0deg) scale(.9);
+  }
+
+  20% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -50%) rotate(360deg) scale(1.05);
+  }
+}
+
+@keyframes magicSymbols {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(.6) rotate(0deg);
+  }
+
+  30% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(1.1) rotate(180deg);
+  }
+}
+
+/* =========================
+   Mobile
+   ========================= */
+
+@media (max-width: 760px) {
+  .wrap {
+    padding: 20px 14px 40px;
+  }
+
+  .grid {
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+
+  .card {
+    padding: 16px 14px;
+    border-radius: 18px;
+  }
+
+  h1 {
+    font-size: 30px;
+  }
+
+  .sub {
+    font-size: 14px;
+    margin-bottom: 16px;
+  }
+
+  h2 {
+    font-size: 17px;
+  }
+
+  .hint {
+    font-size: 17px;
+  }
+
+  .tarot-card {
+    width: min(72vw, 220px);
+    height: calc(min(72vw, 220px) * 1.6);
+  }
+
+  .tarot-image {
+    width: 100%;
+    max-width: 220px;
+  }
+
+  input,
+  button {
+    font-size: 16px;
+  }
+}
+
+
+/* =========================
+   Magic Circle
+   ========================= */
+
+.magic-circle {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 240px;
+  height: 240px;
+  transform: translate(-50%, -50%) scale(.6) rotate(0deg);
+  border-radius: 50%;
+  pointer-events: none;
+  opacity: 0;
+  z-index: 2;
+
+  /* 外側リング */
+  border: 2px solid rgba(179, 125, 255, .65);
+
+  /* 光 */
+  box-shadow:
+    0 0 18px rgba(179, 125, 255, .65),
+    0 0 38px rgba(111, 214, 255, .35),
+    inset 0 0 24px rgba(111, 214, 255, .20);
+}
+
+/* 内側リング */
+.magic-circle::before {
+  content: "";
+  position: absolute;
+  inset: 18px;
+  border-radius: 50%;
+  border: 1.5px solid rgba(255, 255, 255, .55);
+  box-shadow:
+    0 0 12px rgba(255, 255, 255, .35),
+    inset 0 0 12px rgba(179, 125, 255, .20);
+}
+
+/* 月と星の記号 */
+.magic-circle::after {
+  content: "✦   ☾   ✧   ✦";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 180px;
+  text-align: center;
+  color: rgba(255, 255, 255, .92);
+  font-size: 20px;
+  letter-spacing: 12px;
+  text-shadow:
+    0 0 8px rgba(255, 255, 255, .85),
+    0 0 16px rgba(179, 125, 255, .7),
+    0 0 24px rgba(111, 214, 255, .45);
+}
+
+/* glow時に発動 */
+.tarot-card.glow .magic-circle {
+  animation: magicCircleSpin .9s ease forwards;
+}
+
+@keyframes magicCircleSpin {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(.6) rotate(0deg);
+  }
+
+  25% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(1) rotate(-180deg);
+  }
+}
+
+/* =========================
+   Spiral particle magic
+   ========================= */
+
+.sparkle-layer {
+  position: absolute;
+  inset: -40px;
+  pointer-events: none;
+  z-index: 6;
+  overflow: visible;
+}
+
+.spark {
+  position: absolute;
+  left: 50%;
+  top: 85%;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  opacity: 0;
+  will-change: transform, opacity;
+  z-index: 6;
+  color: #fff;
+  font-size: 20px;
+  text-shadow:
+    0 0 8px rgba(255, 255, 255, .95),
+    0 0 16px rgba(179, 125, 255, .8),
+    0 0 28px rgba(111, 214, 255, .7);
+}
+
+.hint-card.fx-glow::before {
+  display: none;
+}
+
+/* 小アルカナ文字列高さ */
+.card p.msg {
+  line-height: 1.6;
+}
+
+
+/* もう一回ボタン */
+.magic-btn {
+  width: auto;
+  border: none;
+  cursor: pointer;
+  display: inline-block;
+  padding: 10px 18px;
+  border-radius: 999px;
+  text-decoration: none;
+  font-weight: bold;
+  color: #fff;
+
+  background: linear-gradient(90deg,
+    #ff9de2,
+    #cba6ff,
+    #9fd3ff,
+    #ffe29f);
+
+  background-size: 300%;
+
+  box-shadow:
+    0 0 8px rgba(255, 182, 255, 0.6),
+    0 0 16px rgba(200, 150, 255, 0.5);
+
+  transition: all 0.4s ease;
+}
+
+/* ホバーで魔法発動✨ */
+.magic-btn:hover {
+  background-position: 100%;
+  box-shadow:
+    0 0 12px rgba(255, 200, 255, 0.9),
+    0 0 24px rgba(180, 140, 255, 0.8),
+    0 0 36px rgba(140, 200, 255, 0.6);
+  transform: scale(1.05);
+}
+
+
+/* タロット逆位置作動 */
+.tarot-image.reversed {
+  transform: rotate(180deg);
+}
+
+.tarot-image {
+  transition: transform 0.6s ease;
+}

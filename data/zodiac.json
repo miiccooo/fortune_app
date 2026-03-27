@@ -1,0 +1,14 @@
+{
+  "aries":   {"jp":"牡羊座", "theme":"はじまり", "color":"レッド", "message":"小さくても一歩が吉。勢いを味方に。"},
+  "taurus":  {"jp":"牡牛座", "theme":"安定",   "color":"グリーン", "message":"丁寧さが最強。ゆっくり整えるほど勝つ。"},
+  "gemini":  {"jp":"双子座", "theme":"情報",   "color":"イエロー", "message":"気になることはメモ。軽やかに広がる日。"},
+  "cancer":  {"jp":"蟹座",   "theme":"安心",   "color":"ホワイト", "message":"守りたいものを優先してOK。自分にも優しく。"},
+  "leo":     {"jp":"獅子座", "theme":"主役",   "color":"ゴールド", "message":"堂々と。『好き』を表に出すほど運が動く。"},
+  "virgo":   {"jp":"乙女座", "theme":"整理",   "color":"ネイビー", "message":"片付けが開運。小さな改善で大きく変わる。"},
+  "libra":   {"jp":"天秤座", "theme":"調和",   "color":"ピンク", "message":"美意識が鍵。心地よい選択をして正解。"},
+  "scorpio": {"jp":"蠍座",   "theme":"深掘り", "color":"ボルドー", "message":"核心に近づく日。大事な本音を大切に。"},
+  "sagittarius":{"jp":"射手座","theme":"冒険","color":"パープル","message":"新しい場所・新しい人がヒントをくれる。"},
+  "capricorn":{"jp":"山羊座","theme":"結果","color":"ブラック","message":"積み上げが光る。今日は淡々とで強い。"},
+  "aquarius":{"jp":"水瓶座","theme":"ひらめき","color":"ターコイズ","message":"常識外れが正解。アイデアを形にして。"},
+  "pisces":  {"jp":"魚座",   "theme":"癒し",   "color":"ラベンダー", "message":"感性が冴える。好きな音・香りで整う。"}
+}

@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="ja">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Fortune Palette - Result</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <link href="https://fonts.googleapis.com/css2?family=Lobster+Two:wght@400;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@400;700&display=swap" rel="stylesheet">
+</head>
+
+<body>
+  <div class="wrap">
+    <a class="back magic-btn" href="/">← もう一回</a>
+    <h1>Fortune Palette</h1>
+
+    <div class="grid">
+      <section class="card fx fx-pop fx-float pink">
+        <h2>基本情報</h2>
+        <p><b>生年月日：</b>{{ data.birthdate }}</p>
+        <p><b>太陽星座：</b>{{ data.zodiac.jp }}</p>
+        <p><b>テーマ：</b>{{ data.zodiac.theme }}</p>
+        <p><b>ラッキーカラー：</b>{{ data.zodiac.color }}</p>
+        <p class="msg">{{ data.zodiac.message }}</p>
+      </section>
+
+      <section class="card fx fx-pop fx-float blue">
+        <h2>四柱推命（簡易：年柱）</h2>
+        <p><b>年柱：</b>{{ data.shichusuimei.ganzhi }}（{{ data.shichusuimei.animal }}）</p>
+        <p><b>十干：</b>{{ data.shichusuimei.stem }}</p>
+        <p><b>五行：</b>{{ data.shichusuimei.elem }}</p>
+        <p><b>陰陽：</b>{{ data.shichusuimei.yin_yang }}</p>
+        {% if data.element_info %}
+        <p class="msg"><b>{{ data.element_info.title }}</b><br>{{ data.element_info.message }}</p>
+        {% endif %}
+      </section>
+
+      <section class="card fx fx-pop fx-float purple">
+        <h2>タロット</h2>
+
+        {% if data.major_image %}
+        <div class="tarot-card" id="tarotCard">
+          <div class="magic-circle"></div>
+          <div class="sparkle-layer"></div>
+
+          <div class="card-inner">
+            <div class="card-front">
+              <img src="{{ url_for('static', filename='image/card_back.png') }}">
+            </div>
+            <div class="card-back">
+              <img class="tarot-image {% if data.is_reversed %}reversed{% endif %}"
+                src="{{ url_for('static', filename='image/' + data.major_image) }}">
+            </div>
+          </div>
+        </div>
+        {% endif %}
+
+        <p><b>大アルカナ：</b>{{ data.tarot_major.name }}（{{ data.tarot_major.position }}）</p>
+        <p class="msg">{{ data.tarot_major.meaning }}</p>
+
+        <p><b>小アルカナ：</b>{{ data.tarot_minor.name }}（{{ data.tarot_minor.position }}）</p>
+        <p class="msg">{{ data.tarot_minor.meaning }}</p>
+      </section>
+
+      <section class="card big fx fx-pop fx-float fx-glow hint-card rainbow">
+        <h2>今日のヒント</h2>
+        <p class="hint msg">{{ data.today_hint }}</p>
+      </section>
+    </div>
+  </div>
+  <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+
+</html>
