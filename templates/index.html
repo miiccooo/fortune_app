@@ -17,9 +17,34 @@
     <p class="sub">生年月日を入力してね★<br>
       太陽星座×タロット×四柱推命（簡易）で今日のヒントをあなたに♪</p>
 
-    <form class="card fx fx-pop fx-float" method="post" action="/result">
+    <form class="card form-card fx fx-pop fx-float" method="post" action="/result">
       <label>生年月日（YYYY-MM-DD）</label>
-      <input name="birthdate" placeholder="2000-01-01" value="{{ birthdate or '' }}" required>
+
+
+      <div class="date-select">
+
+        <select name="year" required>
+          <option value="">年</option>
+          {% for y in range(1950, 2026) %}
+          <option value="{{ y }}" {% if year==y|string %}selected{% endif %}>{{ y }}</option>
+          {% endfor %}
+        </select>
+
+        <select name="month" required>
+          <option value="">月</option>
+          {% for m in range(1, 13) %}
+          <option value="{{ m }}" {% if month==m|string %}selected{% endif %}>{{ m }}</option>
+          {% endfor %}
+        </select>
+
+        <select name="day" required>
+          <option value="">日</option>
+          {% for d in range(1, 32) %}
+          <option value="{{ d }}" {% if day==d|string %}selected{% endif %}>{{ d }}</option>
+          {% endfor %}
+        </select>
+
+      </div>
       {% if error %}
       <p class="error">入力エラー：{{ error }}</p>
       {% endif %}

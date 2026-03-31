@@ -1,67 +1,37 @@
 # -*- coding: utf-8 -*-
-
-# JSON読み込み、ランダム抽選、コマンドライン引数を使うため
 import json, random, sys
-
-# 日付の変換・比較に使う
 from datetime import datetime, date
-
-# ファイルパス操作に使う
 from pathlib import Path
 
-
-# -----------------------------
-# データファイルの場所
-# -----------------------------
-# main.py があるフォルダを基準に data フォルダを見る
 DATA_DIR = Path(__file__).parent / "data"
-
-# 各JSONファイルのパス
-ZODIAC_PATH = DATA_DIR / "zodiac.json"                  # 星座データ
-TAROT_PATH = DATA_DIR / "tarot.json"                    # 大アルカナデータ
-MINOR_PATH = DATA_DIR / "minor_structure.json"          # 小アルカナ構造データ
-ELEMENT_MSG_PATH = DATA_DIR / "element_messages.json"   # 五行メッセージ（あれば使う）
+ZODIAC_PATH = DATA_DIR / "zodiac.json"
+TAROT_PATH = DATA_DIR / "tarot.json"                  # 大アルカナ（個別）
+MINOR_PATH = DATA_DIR / "minor_structure.json"        # 小アルカナ（構造）
+ELEMENT_MSG_PATH = DATA_DIR / "element_messages.json" # 五行メッセージ（任意）
 
 
-# -----------------------------
-# JSONファイルを読む関数
-# -----------------------------
 def load_json(path: Path):
-    # UTF-8で開いてPythonの辞書やリストに変換して返す
     with path.open("r", encoding="utf-8") as f:
         return json.load(f)
 
 
-# -----------------------------
-# 生年月日の文字列チェック
-# -----------------------------
 def parse_birthdate(text: str) -> date:
-    # None対策＋前後の空白を削除
     text = (text or "").strip()
-
-    # 未入力ならエラー
     if not text:
         raise ValueError("未入力です。YYYY-MM-DD 形式で入力してください。")
 
-    # YYYY-MM-DD の形で日付に変換
     try:
         dt = datetime.strptime(text, "%Y-%m-%d").date()
     except ValueError:
-        # 形式が違えばエラー
         raise ValueError("形式が違います。YYYY-MM-DD 形式で入力してください。")
 
-    # 未来日は不可
     if dt > date.today():
         raise ValueError("未来日は入力できません。")
 
     return dt
 
 
-# -----------------------------
-# 太陽星座のキーを返す
-# -----------------------------
 def get_zodiac_key(month: int, day: int) -> str:
-    # 月日を 1214 みたいな形にして判定しやすくする
     md = month * 100 + day
 
     if 321 <= md <= 419:
@@ -90,9 +60,8 @@ def get_zodiac_key(month: int, day: int) -> str:
 
 
 # -----------------------------
-# 四柱推命（簡易）用データ
+# 四柱推命（簡易）：年柱（干支）
 # -----------------------------
-# 十干
 TENKAN = [
     {"jp": "甲", "elem": "木", "yin_yang": "陽"},
     {"jp": "乙", "elem": "木", "yin_yang": "陰"},
@@ -106,7 +75,6 @@ TENKAN = [
     {"jp": "癸", "elem": "水", "yin_yang": "陰"},
 ]
 
-# 十二支
 JUNISHI = [
     {"jp": "子", "animal": "鼠"},
     {"jp": "丑", "animal": "牛"},
@@ -123,59 +91,43 @@ JUNISHI = [
 ]
 
 
-# -----------------------------
-# 年柱（干支）を求める
-# -----------------------------
 def get_year_ganzhi(year: int) -> dict:
     """
-    1984年=甲子 を基準に年干支を求める簡易方式
-    厳密な四柱推命は立春基準などがあるけど、
-    この個人制作では西暦年ベースでわかりやすくしている
+    1984年=甲子 を基準に年干支を求める（簡易・一般的な方式）。
+    ※厳密な四柱推命は立春基準などがあるが、個人制作では西暦年基準でOK。
     """
-    base = 1984  # 甲子の年
+    base = 1984  # 甲子
     diff = year - base
-
-    # 10干と12支は周期が違うので、それぞれ余りで求める
     stem = TENKAN[diff % 10]
     branch = JUNISHI[diff % 12]
-
-    # 必要情報をまとめて返す
     return {
-        "stem": stem["jp"],                 # 十干
-        "branch": branch["jp"],             # 十二支
-        "ganzhi": stem["jp"] + branch["jp"],# 干支の組み合わせ
-        "elem": stem["elem"],               # 五行
-        "yin_yang": stem["yin_yang"],       # 陰陽
-        "animal": branch["animal"],         # 動物
+        "stem": stem["jp"],
+        "branch": branch["jp"],
+        "ganzhi": stem["jp"] + branch["jp"],
+        "elem": stem["elem"],
+        "yin_yang": stem["yin_yang"],
+        "animal": branch["animal"],
     }
 
 
 # -----------------------------
-# 小アルカナを1枚引く
+# タロット：小アルカナ（構造） + 大アルカナ（個別）
 # -----------------------------
 def draw_minor(minor_struct: dict) -> dict:
-    # スート（例：ソード、カップなど）一覧
     suits = list(minor_struct["suits"].keys())
-
-    # ランク（例：エース、2、クイーンなど）一覧
     ranks = list(minor_struct["ranks"].keys())
 
-    # スートとランクをランダムに選ぶ
     suit_key = random.choice(suits)
     rank_key = random.choice(ranks)
 
-    # 50%で逆位置
     reversed_flag = random.random() < 0.5
 
-    # 選ばれたデータを取り出す
     suit = minor_struct["suits"][suit_key]
     rank = minor_struct["ranks"][rank_key]
 
-    # 正逆で意味を切り替える
     rank_meaning = rank["reversed"] if reversed_flag else rank["upright"]
     suit_keywords = suit["keywords_reversed"] if reversed_flag else suit["keywords_upright"]
 
-    # 表示用メッセージを作る
     meaning = f"{suit['theme']}｜{rank_meaning}（キーワード：{random.choice(suit_keywords)}）"
 
     return {
@@ -186,18 +138,13 @@ def draw_minor(minor_struct: dict) -> dict:
     }
 
 
-# -----------------------------
-# 大アルカナ or 小アルカナを混ぜて引く関数
-# ※今の main / Web では未使用
-# -----------------------------
 def draw_tarot_mixed(major_cards: list[dict], minor_struct: dict) -> dict:
-    # 小アルカナ70%、大アルカナ30%
+    # 小アルカナが多いので、小70%：大30%（好みで調整OK）
     if random.random() < 0.7:
         return draw_minor(minor_struct)
 
     card = random.choice(major_cards)
     reversed_flag = random.random() < 0.5
-
     return {
         "type": "major",
         "name": card["name"],
@@ -205,12 +152,10 @@ def draw_tarot_mixed(major_cards: list[dict], minor_struct: dict) -> dict:
         "meaning": card["reversed"] if reversed_flag else card["upright"],
     }
 
-
 # -----------------------------
-# 大アルカナ画像ファイル名を返す
+# タロット画像ファイル名取得
 # -----------------------------
 def get_major_image_filename(card_name: str):
-    # カード名と画像ファイル名の対応表
     image_map = {
         "愚者": "fool.png",
         "魔術師": "magician.png",
@@ -235,16 +180,12 @@ def get_major_image_filename(card_name: str):
         "審判": "judgement.png",
         "世界": "world.png"
     }
-
-    # 見つからなければ None を返す
     return image_map.get(card_name)
 
-
 # -----------------------------
-# 今日のヒント生成
+# 合成ヒント生成（ルールベース）
 # -----------------------------
 def build_today_hint(z: dict, yz: dict, t: dict) -> str:
-    # 五行ごとのおすすめ行動
     element_actions = {
         "木": ["新しい事にも挑戦し", "ストレッチし", "まず学んでみ"],
         "火": ["表現し", "一歩前に踏み出し", "気持ちを盛り上げ"],
@@ -253,7 +194,6 @@ def build_today_hint(z: dict, yz: dict, t: dict) -> str:
         "水": ["まず一休みし", "情報や必要なことを集め", "流れに乗る事を心がけ"],
     }
 
-    # 星座テーマに応じた行動スタイル
     theme_styles = {
         "はじまり": "まず着手する",
         "安定": "丁寧に積み上げる",
@@ -268,15 +208,12 @@ def build_today_hint(z: dict, yz: dict, t: dict) -> str:
         "ひらめき": "アイデアを形にする",
         "癒し": "感覚を満たす",
     }
-
-    # 星座データの theme に対応するスタイルを取得
     style = theme_styles.get(z.get("theme", ""), "自分のペースで進める")
 
-    # タロットの意味文と正逆位置
     meaning = t.get("meaning", "")
     position = t.get("position", "正位置")
 
-    # 正位置 / 逆位置で全体トーンを変える
+    # トーン（正逆で変える）
     if position == "逆位置":
         tone = "深呼吸。整う事に集中してみて"
         caution = True
@@ -284,7 +221,7 @@ def build_today_hint(z: dict, yz: dict, t: dict) -> str:
         tone = "追い風だよ。直感を信じて行こう"
         caution = False
 
-    # 意味文に含まれる言葉からアクションを決めるルール表
+    # まずルール表（先に定義！）
     key_rules = [
         (["整理", "判断", "正義", "決断", "選択", "切る"], "決める"),
         (["調整", "節制", "バランス", "中庸", "整える", "回復"], "整える"),
@@ -295,7 +232,7 @@ def build_today_hint(z: dict, yz: dict, t: dict) -> str:
         (["成功", "太陽", "祝福", "達成", "実り"], "広げる"),
         (["審判", "後悔", "決めきれない", "迷い"], "見直す"),
 
-        # 小アルカナ寄りの言葉
+        # 小アルカナ寄り
         (["遅れ", "停滞", "中途半端"], "ペース調整する"),
         (["依存", "執着", "甘え"], "自立する"),
         (["燃え尽き", "疲労", "消耗"], "休む"),
@@ -303,75 +240,62 @@ def build_today_hint(z: dict, yz: dict, t: dict) -> str:
         (["感情的", "過干渉"], "距離を取る"),
     ]
 
-    # まずアクションは未決定にしておく
+    # 逆位置×負荷ワードは最優先
     key_action = None
-
-    # 逆位置で、しんどいワードが含まれるときは最優先で「落ち着く」
     if position == "逆位置":
         if any(w in meaning for w in ["混乱", "感情的", "疲れ", "消耗", "過干渉", "不安"]):
             key_action = "落ち着く"
 
-    # まだ決まっていなければルール表から探す
+    # まだ決まってなければルールで探す
     if key_action is None:
         for words, action in key_rules:
             if any(w in meaning for w in words):
                 key_action = action
                 break
 
-    # 最後まで決まらなければデフォルト
+    # それでも無ければデフォルト
     if key_action is None:
         key_action = "整える" if position == "逆位置" else "進める"
 
-    # 五行から行動を決める
+    # 五行アクション（逆位置は守り寄せ）
     elem = yz.get("elem", "土")
-
-    # 逆位置は守り寄りの行動だけにする
     if position == "逆位置":
         safe_actions = ["休む", "整える", "ペース調整する", "距離を取る"]
         elem_action = random.choice(safe_actions)
     else:
         elem_action = random.choice(element_actions.get(elem, ["整える"]))
 
-    # 最終メッセージを返す
+    # 文章生成
     if caution:
         return f"{tone}。『{style}』をベースに、まず{elem_action}→{key_action}の順でいってみよう☆"
     else:
         return f"{tone}。『{style}』をベースに、{elem_action}てから{key_action}と運が乗ってくよ〜♪"
 
-
-# -----------------------------
-# CUI版メイン処理
-# -----------------------------
 def main():
     print("Fortune Palette（CUI版）")
     print("生年月日から太陽星座＋タロット＋（簡易）四柱推命で今日のヒントを出します。\n")
 
-    # JSONを読み込む
     zodiac = load_json(ZODIAC_PATH)
     major = load_json(TAROT_PATH)
     minor_struct = load_json(MINOR_PATH)
 
-    # 五行メッセージはファイルがあるときだけ読む
     element_msgs = {}
     if ELEMENT_MSG_PATH.exists():
         element_msgs = load_json(ELEMENT_MSG_PATH)
 
-    # コマンドライン引数があればそれを使う
-    # 例: python main.py 1994-12-14
+    # 引数でもOK：python main.py 1994-12-14
     if len(sys.argv) >= 2:
         birth_text = sys.argv[1]
     else:
-        # なければキーボード入力
         birth_text = input("生年月日を入力してください（YYYY-MM-DD）：")
 
-    # 入力チェック
     try:
         bd = parse_birthdate(birth_text)
     except ValueError as e:
         print(f"\n入力エラー：{e}")
         return
 
-    # 星座を求める
+    # 太陽星座
     zkey = get_zodiac_key(bd.month, bd.day)
     z = zodiac[zkey]
 
@@ -379,7 +303,7 @@ def main():
     yz = get_year_ganzhi(bd.year)
     elem_info = element_msgs.get(yz["elem"])
 
-    # 大アルカナを1枚引く
+    # 🌙 大アルカナ
     major_card = random.choice(major)
     rev_major = random.random() < 0.5
 
@@ -390,13 +314,14 @@ def main():
         "meaning": major_card["reversed"] if rev_major else major_card["upright"],
     }
 
-    # 小アルカナを1枚引く
+    # 🔮 小アルカナ
     t_minor = draw_minor(minor_struct)
 
-    # 今日のヒントを作る（今は大アルカナベース）
+
+    # 合成ヒント
     today_hint = build_today_hint(z, yz, t_major)
 
-    # 表示
+    # 出力
     print("\n========== 結果 ==========")
     print(f"生年月日：{bd.isoformat()}")
     print(f"太陽星座：{z['jp']}")
@@ -410,42 +335,32 @@ def main():
         print(f"{elem_info['title']}：{elem_info['message']}")
     print("--------------------------")
     print(f"大アルカナ：{t_major['name']}（{t_major['position']}）")
-    print(f"小アルカナ：{t_minor['name']}（{t_minor['position']}）")
+    print(f"小アルカナ：{t_minor['name']}（{t_minor['position']}）")   
     print(f"大アルカナメッセージ：{t_major['meaning']}")
     print(f"小アルカナメッセージ：{t_minor['meaning']}")
     print("--------------------------")
     print(f"今日のヒント：{today_hint}")
     print("==========================\n")
 
-
-# -----------------------------
-# Web版用：結果を辞書で返す
-# -----------------------------
 def fortune_from_birthdate(birth_text: str) -> dict:
-    """生年月日文字列から占い結果を dict で返す（Web用）"""
-
-    # 入力文字列を日付に変換
+    """生年月日文字列から占い結果をdictで返す（Web用）"""
     bd = parse_birthdate(birth_text)
 
-    # JSONを読み込む
     zodiac = load_json(ZODIAC_PATH)
     major = load_json(TAROT_PATH)
     minor_struct = load_json(MINOR_PATH)
 
-    # 五行メッセージがあれば読む
     element_msgs = {}
     if ELEMENT_MSG_PATH.exists():
         element_msgs = load_json(ELEMENT_MSG_PATH)
 
-    # 星座を求める
     zkey = get_zodiac_key(bd.month, bd.day)
     z = zodiac[zkey]
 
-    # 四柱推命（簡易）
     yz = get_year_ganzhi(bd.year)
     elem_info = element_msgs.get(yz["elem"])
 
-    # 大アルカナを1枚引く
+    # 🌙 大アルカナ
     major_card = random.choice(major)
     rev_major = random.random() < 0.5
 
@@ -456,28 +371,23 @@ def fortune_from_birthdate(birth_text: str) -> dict:
         "meaning": major_card["reversed"] if rev_major else major_card["upright"],
     }
 
-    # 小アルカナを1枚引く
+    # 🔮 小アルカナ
     t_minor = draw_minor(minor_struct)
-
-    # ヒント生成（大アルカナベース）
+    
+    # ヒント（大アルカナベース）
     today_hint = build_today_hint(z, yz, t_major)
 
-    # HTML側で使いやすいように必要情報をまとめて返す
     return {
-        "birthdate": bd.isoformat(),                                # 生年月日
-        "zodiac": z,                                                # 星座データ一式
-        "shichusuimei": yz,                                         # 年柱データ
-        "element_info": elem_info,                                  # 五行メッセージ
-        "today_hint": today_hint,                                   # 今日のヒント
-        "tarot_major": t_major,                                     # 大アルカナ
-        "tarot_minor": t_minor,                                     # 小アルカナ
-        "major_image": get_major_image_filename(t_major["name"]),   # 大アルカナ画像名
-        "is_reversed": t_major["position"] == "逆位置"              # 逆位置かどうか
+    "birthdate": bd.isoformat(),
+    "zodiac": z,
+    "shichusuimei": yz,
+    "element_info": elem_info,
+    "today_hint": today_hint,
+    "tarot_major": t_major,
+    "tarot_minor": t_minor,
+    "major_image": get_major_image_filename(t_major["name"]),
+    "is_reversed": t_major["position"] == "逆位置"
     }
 
-
-# -----------------------------
-# このファイルを直接実行したときだけ main() を動かす
-# -----------------------------
 if __name__ == "__main__":
     main()

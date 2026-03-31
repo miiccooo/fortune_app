@@ -49,8 +49,9 @@
               <img src="{{ url_for('static', filename='image/card_back.png') }}">
             </div>
             <div class="card-back">
-              <img class="tarot-image {% if data.is_reversed %}reversed{% endif %}"
-                src="{{ url_for('static', filename='image/' + data.major_image) }}">
+              <div class="tarot-face {% if data.is_reversed %}reversed{% endif %}">
+                <img class="tarot-image" src="{{ url_for('static', filename='image/' + data.major_image) }}">
+              </div>
             </div>
           </div>
         </div>

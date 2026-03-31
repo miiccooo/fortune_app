@@ -187,17 +187,6 @@ h2::after {
     0 0 22px #f7ff5c;
 }
 
-@keyframes glowShift {
-  0% {
-    filter: hue-rotate(0deg);
-  }
-
-  100% {
-    filter: hue-rotate(360deg);
-  }
-}
-
-
 .msg {
   margin-top: 12px;
   padding: 12px 14px;
@@ -260,10 +249,12 @@ b {
 
 label {
   display: block;
-  font-size: 13px;
-  color: var(--sub);
-  margin-bottom: 8px;
-  font-weight: 600;
+  font-size: 14px;
+  color: #b15dff;
+  margin-bottom: 10px;
+  font-weight: 700;
+  text-align: center;
+  text-shadow: 0 0 8px rgba(179, 125, 255, 0.15);
 }
 
 input {
@@ -476,8 +467,20 @@ button::after {
   -webkit-backface-visibility: hidden;
 }
 
-.card-front img,
-.card-back img {
+.card-front img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 12px;
+}
+
+.card-back .tarot-face {
+  width: 100%;
+  height: 100%;
+  border-radius: 12px;
+}
+
+.card-back .tarot-face img {
   width: 100%;
   height: 100%;
   object-fit: cover;
@@ -535,21 +538,6 @@ button::after {
   }
 }
 
-@keyframes magicSymbols {
-  0% {
-    opacity: 0;
-    transform: translate(-50%, -50%) scale(.6) rotate(0deg);
-  }
-
-  30% {
-    opacity: 1;
-  }
-
-  100% {
-    opacity: 0;
-    transform: translate(-50%, -50%) scale(1.1) rotate(180deg);
-  }
-}
 
 /* =========================
    Mobile
@@ -759,10 +747,113 @@ button::after {
 
 
 /* タロット逆位置作動 */
-.tarot-image.reversed {
+.tarot-face {
+  width: 100%;
+  height: 100%;
+  transition: transform 0.6s ease;
+}
+
+.tarot-face.reversed {
   transform: rotate(180deg);
 }
 
-.tarot-image {
-  transition: transform 0.6s ease;
+/* 生年月日入力プルダウン */
+/* 生年月日セレクト全体 */
+.date-select {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  align-items: center;
+  margin-top: 8px;
+  flex-wrap: wrap;
 }
+
+/* プルダウン本体 */
+.date-select select {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+
+  min-width: 92px;
+  padding: 12px 38px 12px 14px;
+  border: 2px solid #f3d7ff;
+  border-radius: 999px;
+  background:
+    linear-gradient(135deg, #fff8fd 0%, #f7f0ff 55%, #eef8ff 100%);
+  color: #7a5a8f;
+  font-family: 'M PLUS Rounded 1c', sans-serif;
+  font-size: 15px;
+  font-weight: 700;
+  box-shadow:
+    0 6px 16px rgba(179, 125, 255, 0.18),
+    inset 0 1px 0 rgba(255, 255, 255, 0.9);
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+/* ホバー */
+.date-select select:hover {
+  transform: translateY(-1px);
+  box-shadow:
+    0 10px 20px rgba(179, 125, 255, 0.22),
+    inset 0 1px 0 rgba(255, 255, 255, 0.95);
+}
+
+/* フォーカス */
+.date-select select:focus {
+  outline: none;
+  border-color: #ffb3e6;
+  box-shadow:
+    0 0 0 4px rgba(255, 179, 230, 0.22),
+    0 10px 20px rgba(179, 125, 255, 0.2);
+}
+
+/* 年月日の1個ずつを包む箱 */
+.select-box {
+  position: relative;
+  display: inline-block;
+}
+
+/* 右側の▼ */
+.select-box::after {
+  content: "▾";
+  position: absolute;
+  right: 14px;
+  top: 50%;
+  transform: translateY(-52%);
+  color: #c48bff;
+  font-size: 14px;
+  pointer-events: none;
+}
+
+/* キラッ */
+.select-box::before {
+  content: "✦";
+  position: absolute;
+  left: 10px;
+  top: -8px;
+  font-size: 12px;
+  color: #ff9ed8;
+  text-shadow: 0 0 8px rgba(255, 158, 216, 0.7);
+  pointer-events: none;
+}
+
+/* モバイル */
+@media (max-width: 760px) {
+  .date-select {
+    gap: 8px;
+  }
+
+  .date-select select {
+    min-width: 84px;
+    font-size: 14px;
+    padding: 11px 34px 11px 12px;
+  }
+}
+
+/* 入力フォームの幅 */
+.form-card {
+  max-width: 420px;
+  margin: 0 auto;
+}
+
