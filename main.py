@@ -9,7 +9,22 @@ from datetime import datetime, date
 # ファイルパス操作に使う
 from pathlib import Path
 
+#カラーマップ
 
+COLOR_MAP = {
+    "レッド": "red",
+    "コーラル": "coral",
+    "ゴールド": "gold",
+    "ベージュ": "beige",
+    "ブラウン": "brown",
+    "オリーブ": "olive",
+    "イエロー": "yellow",
+    "ミント": "mintcream",
+    "スカイブルー": "skyblue",
+    "ネイビー": "navy",
+    "ブルー": "blue",
+    "ラベンダー": "lavender"
+}
 # -----------------------------
 # データファイルの場所
 # -----------------------------
@@ -21,15 +36,58 @@ ZODIAC_PATH = DATA_DIR / "zodiac.json"                  # 星座データ
 TAROT_PATH = DATA_DIR / "tarot.json"                    # 大アルカナデータ
 MINOR_PATH = DATA_DIR / "minor_structure.json"          # 小アルカナ構造データ
 ELEMENT_MSG_PATH = DATA_DIR / "element_messages.json"   # 五行メッセージ（あれば使う）
+MAJOR_IMAGE_PATH = DATA_DIR / "major_images.json"       # 大アルカナ画像対応表
+HINT_RULES_PATH = DATA_DIR / "hint_rules.json"          # ヒント生成用ルール
+RISSHUN_PATH = DATA_DIR / "risshun_1966_2060.json"      # 立春データ
+
+# -----------------------------
+# ラッキーカラーの関数
+# -----------------------------
+def convert_colors(color_list):
+    result = []
+    for c in color_list:
+        result.append({
+            "name": c,                     # 表示用（日本語）
+            "code": COLOR_MAP.get(c, "#ccc")  # CSS用（英語 or fallback）
+        })
+    return result
 
 
 # -----------------------------
 # JSONファイルを読む関数
 # -----------------------------
 def load_json(path: Path):
-    # UTF-8で開いてPythonの辞書やリストに変換して返す
     with path.open("r", encoding="utf-8") as f:
         return json.load(f)
+
+
+# -----------------------------------
+# 占いで使うJSONデータをまとめて読み込む
+# -----------------------------------
+def load_fortune_data():
+    # 星座データ
+    zodiac = load_json(ZODIAC_PATH)
+
+    # 大アルカナデータ
+    major = load_json(TAROT_PATH)
+
+    # 小アルカナ構造データ
+    minor_struct = load_json(MINOR_PATH)
+
+    # 五行メッセージ（ファイルがあるときだけ読む）
+    element_msgs = {}
+    if ELEMENT_MSG_PATH.exists():
+        element_msgs = load_json(ELEMENT_MSG_PATH)
+
+    # 大アルカナ画像対応表
+    major_images = load_json(MAJOR_IMAGE_PATH)
+
+    # ヒント生成ルール
+    hint_rules = load_json(HINT_RULES_PATH)
+
+
+    # まとめて返す
+    return zodiac, major, minor_struct, element_msgs, major_images, hint_rules
 
 
 # -----------------------------
@@ -88,6 +146,118 @@ def get_zodiac_key(month: int, day: int) -> str:
         return "aquarius"
     return "pisces"
 
+SIGN_ELEMENT = {
+    "aries": "fire",
+    "leo": "fire",
+    "sagittarius": "fire",
+    "taurus": "earth",
+    "virgo": "earth",
+    "capricorn": "earth",
+    "gemini": "air",
+    "libra": "air",
+    "aquarius": "air",
+    "cancer": "water",
+    "scorpio": "water",
+    "pisces": "water"
+}
+
+
+def get_today_zodiac():
+    today = date.today()
+    return get_zodiac_key(today.month, today.day)
+
+
+def tarot_to_element(card_name: str):
+    if "太陽" in card_name or "戦車" in card_name:
+        return "fire"
+    if "星" in card_name or "月" in card_name:
+        return "water"
+    if "皇帝" in card_name or "世界" in card_name:
+        return "earth"
+    if "魔術師" in card_name or "愚者" in card_name:
+        return "air"
+    return None
+
+
+def calculate_element_balance(zkey: str, t_major: dict):
+    score = {
+        "fire": 0,
+        "earth": 0,
+        "air": 0,
+        "water": 0
+    }
+
+    # 生まれ持ったベース（太陽星座）
+    natal_elem = SIGN_ELEMENT[zkey]
+    score[natal_elem] += 2
+
+    # 今日の空気（今日の太陽星座）
+    today_key = get_today_zodiac()
+    today_elem = SIGN_ELEMENT[today_key]
+    score[today_elem] += 1
+
+    # タロット補正
+    tarot_elem = tarot_to_element(t_major["name"])
+    if tarot_elem:
+        if t_major["position"] == "逆位置":
+            score[tarot_elem] -= 1
+        else:
+            score[tarot_elem] += 1
+
+    return score
+
+
+def get_lucky_color_v2(zkey: str, t_major: dict):
+    score = calculate_element_balance(zkey, t_major)
+
+    ELEMENT_COLORS = {
+        "fire": ["レッド", "コーラル", "ゴールド"],
+        "earth": ["ベージュ", "ブラウン", "オリーブ"],
+        "air": ["イエロー", "ミント", "スカイブルー"],
+        "water": ["ネイビー", "ブルー", "ラベンダー"]
+    }
+
+    weakest = min(score, key=score.get)
+    strongest = max(score, key=score.get)
+
+    ELEMENT_LABELS = {
+        "fire": "火",
+        "earth": "地",
+        "air": "風",
+        "water": "水"
+    }
+
+    return {
+        "balance": ELEMENT_COLORS[weakest],
+        "boost": ELEMENT_COLORS[strongest],
+        "weakest": weakest,
+        "strongest": strongest,
+        "weakest_label": ELEMENT_LABELS[weakest],
+        "strongest_label": ELEMENT_LABELS[strongest],
+        "score": score
+    }
+
+# -----------------------------
+# 立春データ読み込み
+# -----------------------------
+with RISSHUN_PATH.open("r", encoding="utf-8") as f:
+    RISSHUN_DATA = json.load(f)
+
+def get_adjusted_year(birth_str):
+    """立春日ベースで年を補正する（時間入力なし版）"""
+    birth_date = datetime.strptime(birth_str, "%Y-%m-%d").date()
+    year = birth_date.year
+
+    risshun = RISSHUN_DATA.get(str(year))
+    if not risshun:
+        return year
+
+    risshun_date = datetime.strptime(risshun["japan_date"], "%Y-%m-%d").date()
+
+    if birth_date < risshun_date:
+        return year - 1
+    return year
+
 
 # -----------------------------
 # 四柱推命（簡易）用データ
@@ -121,7 +291,6 @@ JUNISHI = [
     {"jp": "戌", "animal": "犬"},
     {"jp": "亥", "animal": "猪"},
 ]
-
 
 # -----------------------------
 # 年柱（干支）を求める
@@ -209,66 +378,22 @@ def draw_tarot_mixed(major_cards: list[dict], minor_struct: dict) -> dict:
 # -----------------------------
 # 大アルカナ画像ファイル名を返す
 # -----------------------------
-def get_major_image_filename(card_name: str):
-    # カード名と画像ファイル名の対応表
-    image_map = {
-        "愚者": "fool.png",
-        "魔術師": "magician.png",
-        "女教皇": "high_priestess.png",
-        "女帝": "empress.png",
-        "皇帝": "emperor.png",
-        "法王": "hierophant.png",
-        "恋人": "lovers.png",
-        "戦車": "chariot.png",
-        "力": "strength.png",
-        "隠者": "hermit.png",
-        "運命の輪": "wheel_of_fortune.png",
-        "正義": "justice.png",
-        "吊るされた男": "hanged_man.png",
-        "死神": "death.png",
-        "節制": "temperance.png",
-        "悪魔": "devil.png",
-        "塔": "tower.png",
-        "星": "star.png",
-        "月": "moon.png",
-        "太陽": "sun.png",
-        "審判": "judgement.png",
-        "世界": "world.png"
-    }
-
-    # 見つからなければ None を返す
+def get_major_image_filename(card_name: str, image_map: dict):
+    # カード名に対応する画像ファイル名を返す
     return image_map.get(card_name)
 
 
 # -----------------------------
 # 今日のヒント生成
 # -----------------------------
-def build_today_hint(z: dict, yz: dict, t: dict) -> str:
+def build_today_hint(z: dict, yz: dict, t: dict, hint_rules: dict) -> str:
     # 五行ごとのおすすめ行動
-    element_actions = {
-        "木": ["新しい事にも挑戦し", "ストレッチし", "まず学んでみ"],
-        "火": ["表現し", "一歩前に踏み出し", "気持ちを盛り上げ"],
-        "土": ["整え", "段取りを大切にし", "まず基礎固め"],
-        "金": ["余計な荷物を下ろし", "決断を大切にし", "まずルール化し"],
-        "水": ["まず一休みし", "情報や必要なことを集め", "流れに乗る事を心がけ"],
-    }
+    element_actions = hint_rules["element_actions"]
 
     # 星座テーマに応じた行動スタイル
-    theme_styles = {
-        "はじまり": "まず着手する",
-        "安定": "丁寧に積み上げる",
-        "情報": "軽く試してみる",
-        "安心": "守りを整える",
-        "主役": "堂々と選ぶ",
-        "整理": "無駄を減らす",
-        "調和": "バランスを取る",
-        "深掘り": "本質を見に行く",
-        "冒険": "新しい方へ動く",
-        "結果": "淡々と進め切る",
-        "ひらめき": "アイデアを形にする",
-        "癒し": "感覚を満たす",
-    }
+    theme_styles = hint_rules["theme_styles"]
 
+    
     # 星座データの theme に対応するスタイルを取得
     style = theme_styles.get(z.get("theme", ""), "自分のペースで進める")
 
@@ -346,15 +471,8 @@ def main():
     print("Fortune Palette（CUI版）")
     print("生年月日から太陽星座＋タロット＋（簡易）四柱推命で今日のヒントを出します。\n")
 
-    # JSONを読み込む
-    zodiac = load_json(ZODIAC_PATH)
-    major = load_json(TAROT_PATH)
-    minor_struct = load_json(MINOR_PATH)
-
-    # 五行メッセージはファイルがあるときだけ読む
-    element_msgs = {}
-    if ELEMENT_MSG_PATH.exists():
-        element_msgs = load_json(ELEMENT_MSG_PATH)
+    # JSONデータをまとめて読み込む
+    zodiac, major, minor_struct, element_msgs, _, hint_rules = load_fortune_data()
 
     # コマンドライン引数があればそれを使う
     # 例: python main.py 1994-12-14
@@ -376,7 +494,8 @@ def main():
     z = zodiac[zkey]
 
     # 四柱推命（簡易：年柱）
-    yz = get_year_ganzhi(bd.year)
+    adjusted_year = get_adjusted_year(birth_text)
+    yz = get_year_ganzhi(adjusted_year)
     elem_info = element_msgs.get(yz["elem"])
 
     # 大アルカナを1枚引く
@@ -393,8 +512,10 @@ def main():
     # 小アルカナを1枚引く
     t_minor = draw_minor(minor_struct)
 
+    lucky_color = get_lucky_color_v2(zkey, t_major)
+
     # 今日のヒントを作る（今は大アルカナベース）
-    today_hint = build_today_hint(z, yz, t_major)
+    today_hint = build_today_hint(z, yz, t_major, hint_rules)
 
     # 表示
     print("\n========== 結果 ==========")
@@ -427,22 +548,16 @@ def fortune_from_birthdate(birth_text: str) -> dict:
     # 入力文字列を日付に変換
     bd = parse_birthdate(birth_text)
 
-    # JSONを読み込む
-    zodiac = load_json(ZODIAC_PATH)
-    major = load_json(TAROT_PATH)
-    minor_struct = load_json(MINOR_PATH)
-
-    # 五行メッセージがあれば読む
-    element_msgs = {}
-    if ELEMENT_MSG_PATH.exists():
-        element_msgs = load_json(ELEMENT_MSG_PATH)
+    # JSONデータをまとめて読み込む
+    zodiac, major, minor_struct, element_msgs, major_images, hint_rules = load_fortune_data()
 
     # 星座を求める
     zkey = get_zodiac_key(bd.month, bd.day)
     z = zodiac[zkey]
 
     # 四柱推命（簡易）
-    yz = get_year_ganzhi(bd.year)
+    adjusted_year = get_adjusted_year(birth_text)
+    yz = get_year_ganzhi(adjusted_year)
     elem_info = element_msgs.get(yz["elem"])
 
     # 大アルカナを1枚引く
@@ -459,9 +574,22 @@ def fortune_from_birthdate(birth_text: str) -> dict:
     # 小アルカナを1枚引く
     t_minor = draw_minor(minor_struct)
 
-    # ヒント生成（大アルカナベース）
-    today_hint = build_today_hint(z, yz, t_major)
+    lucky_color = get_lucky_color_v2(zkey, t_major)
+    lucky_color["balance"] = convert_colors(lucky_color["balance"])
+    lucky_color["boost"] = convert_colors(lucky_color["boost"])
 
+    if not lucky_color["balance"]:
+        lucky_color["balance"] = [{"name": "グレー", "code": "#ccc"}]
+
+    if not lucky_color["boost"]:
+        lucky_color["boost"] = [{"name": "グレー", "code": "#ccc"}]
+
+    # ヒント生成（大アルカナベース）
+    today_hint = build_today_hint(z, yz, t_major, hint_rules)
+
+    # 星座のラッキーカラー
+    zodiac_color_code = COLOR_MAP.get(z["color"], "#ccc")
+    
     # HTML側で使いやすいように必要情報をまとめて返す
     return {
         "birthdate": bd.isoformat(),                                # 生年月日
@@ -471,8 +599,10 @@ def fortune_from_birthdate(birth_text: str) -> dict:
         "today_hint": today_hint,                                   # 今日のヒント
         "tarot_major": t_major,                                     # 大アルカナ
         "tarot_minor": t_minor,                                     # 小アルカナ
-        "major_image": get_major_image_filename(t_major["name"]),   # 大アルカナ画像名
-        "is_reversed": t_major["position"] == "逆位置"              # 逆位置かどうか
+        "major_image": get_major_image_filename(t_major["name"], major_images),   # 大アルカナ画像名
+        "is_reversed": t_major["position"] == "逆位置",              # 逆位置かどうか
+        "zodiac_color_code": zodiac_color_code,
+        "lucky_color": lucky_color
     }
 
 

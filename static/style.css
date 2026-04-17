@@ -160,6 +160,16 @@ h2::after {
     0 0 22px #ffc0eb;
 }
 
+.orange h2 {
+  color: #fff;
+  text-shadow:
+    1px 1px 1px rgba(0, 0, 0, 0.2),
+    0 0 6px #fba505,
+    0 0 14px #ffefaa,
+    0 0 22px #ffe6c0;
+
+}
+
 .blue h2 {
   color: #fff;
   text-shadow:
@@ -202,6 +212,12 @@ h2::after {
       rgba(254, 201, 229, 0.34));
 }
 
+.orange .msg {
+  background: linear-gradient(90deg,
+      rgba(255, 200, 0, 0.248),
+      rgba(254, 242, 201, 0.34));
+}
+
 .purple .msg {
   background: linear-gradient(90deg,
       rgba(179, 57, 255, 0.18),
@@ -229,6 +245,10 @@ b {
 
 .pink b {
   color: #ff428f;
+}
+
+.orange b {
+  color: #f6de3e;
 }
 
 .blue b {
@@ -317,10 +337,6 @@ button:active {
   transform: scale(.97);
 }
 
-button::after {
-  content: "✨";
-  margin-left: 6px;
-}
 
 .error {
   color: #c0392b;
@@ -857,3 +873,24 @@ button::after {
   margin: 0 auto;
 }
 
+/* ラッキーカラーのカラー表示 */
+.color-chip {
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  border-radius: 6px;
+  margin: 0 6px 0 10px;
+  vertical-align: middle;
+  border: 1px solid #fff;
+  box-shadow: 0 0 6px rgba(255, 182, 193, 0.5);
+  transition: 0.2s;
+}
+
+.color-chip:hover {
+  transform: scale(1.2);
+}
+
+.color-name {
+  margin-right: 10px;
+  font-size: 14px;
+}

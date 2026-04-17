@@ -21,10 +21,35 @@
         <p><b>生年月日：</b>{{ data.birthdate }}</p>
         <p><b>太陽星座：</b>{{ data.zodiac.jp }}</p>
         <p><b>テーマ：</b>{{ data.zodiac.theme }}</p>
-        <p><b>ラッキーカラー：</b>{{ data.zodiac.color }}</p>
         <p class="msg">{{ data.zodiac.message }}</p>
       </section>
+      <section class="card fx fx-pop fx-float orange">
+        <h2>ラッキーカラー</h2>
 
+        <p><b>星座のラッキーカラー：</b>
+          <span class="color-chip" style="background-color: {{ data.zodiac_color_code }};"></span>
+          <span class="color-name">{{ data.zodiac.color }}</span>
+        </p>
+
+        <p><b>補うカラー：</b>
+          {% if data.lucky_color.balance %}
+          <span class="color-chip" style="background-color: {{ data.lucky_color.balance[0].code }};"></span>
+          <span class="color-name">{{ data.lucky_color.balance[0].name }}</span>
+          {% endif %}
+        </p>
+
+        <p><b>強めるカラー：</b>
+          {% if data.lucky_color.boost %}
+          <span class="color-chip" style="background-color: {{ data.lucky_color.boost[0].code }};"></span>
+          <span class="color-name">{{ data.lucky_color.boost[0].name }}</span>
+          {% endif %}
+        </p>
+
+        <p class="msg">
+          不足エレメント：{{ data.lucky_color.weakest_label }}<br>
+          追い風エレメント：{{ data.lucky_color.strongest_label }}
+        </p>
+      </section>
       <section class="card fx fx-pop fx-float blue">
         <h2>四柱推命（簡易：年柱）</h2>
         <p><b>年柱：</b>{{ data.shichusuimei.ganzhi }}（{{ data.shichusuimei.animal }}）</p>

@@ -1,0 +1,6 @@
+Power Shellで下記を入力
+
+
+①　cd "C:\Users\frontier-Python\Desktop\fortune_app"
+
+②　python app.py
