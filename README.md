@@ -59,5 +59,8 @@ https://github.com/miiccooo/fortune_app
 
 ## ■ 画面イメージ
 
-![トップ画面](static/image/top.png)
-![結果画面](static/image/result.png)
+### トップ画面
+![トップ画面](static/image/top_image.jpeg)
+
+### 結果画面
+![結果画面](static/image/result_image.jpeg)
